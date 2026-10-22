@@ -31,6 +31,7 @@ include { CELLPOSE_RESOLIFT_MORPHOLOGY_OME_TIF             } from '../subworkflo
 include { CELLPOSE_BAYSOR_IMPORT_SEGMENTATION              } from '../subworkflows/local/cellpose_baysor_import_segmentation/main'
 include { STARDIST_RESOLIFT_MORPHOLOGY_OME_TIF             } from '../subworkflows/local/stardist_resolift_morphology_ome_tif/main'
 include { XENIUMRANGER_RESEGMENT_MORPHOLOGY_OME_TIF        } from '../subworkflows/local/xeniumranger_resegment_morphology_ome_tif/main'
+include { INSTANSEG_IMPORT_SEGMENTATION                    } from '../subworkflows/local/instanseg_import_segmentation/main'
 
 // segmentation-free subworkflows
 include { BAYSOR_GENERATE_SEGFREE                          } from '../subworkflows/local/baysor_generate_segfree/main'
@@ -45,6 +46,7 @@ include { SPATIALDATA_WRITE_META_MERGE                     } from '../subworkflo
 
 // qc layer subworkflows
 include { OPT_FLIP_TRACK_STAT                              } from '../subworkflows/local/opt_flip_track_stat/main'
+include { OVRLPY                                           } from '../modules/local/ovrlpy/main'
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -87,6 +89,7 @@ workflow SPATIALAXE {
     qupath_polygons
     reference_annotations
     relabel_genes
+    run_ovrlpy
     run_qc
     segger_model
     segmentation_mask
@@ -490,6 +493,23 @@ workflow SPATIALAXE {
             ch_coordinate_space = CELLPOSE_RESOLIFT_MORPHOLOGY_OME_TIF.out.coordinate_space
         }
 
+        // run instanseg on every morphology_focus channel (or the samplesheet image)
+        if (method == 'instanseg') {
+
+            ch_instanseg_input = ch_input.map { meta, bundle, image ->
+                return [meta, file(bundle), image ? file(image, checkIfExists: true) : []]
+            }
+
+            INSTANSEG_IMPORT_SEGMENTATION(
+                ch_instanseg_input,
+                ch_bundle_path,
+                nucleus_segmentation_only,
+                expansion_distance,
+            )
+            ch_redefined_bundle = INSTANSEG_IMPORT_SEGMENTATION.out.redefined_bundle
+            ch_coordinate_space = INSTANSEG_IMPORT_SEGMENTATION.out.coordinate_space
+        }
+
         // run stardist on the morphology_ome.tif
         if (method == 'stardist') {
 
@@ -619,6 +639,15 @@ workflow SPATIALAXE {
                 ch_gene_synonyms,
             )
         }
+    }
+
+    // run ovrlpy signal integrity on the bundle this run ends with: the new
+    // bundle in image or coordinate mode, otherwise the input bundle
+    if (run_ovrlpy) {
+
+        OVRLPY(
+            mode == 'image' || mode == 'coordinate' ? ch_redefined_bundle : ch_bundle_path
+        )
     }
 
 

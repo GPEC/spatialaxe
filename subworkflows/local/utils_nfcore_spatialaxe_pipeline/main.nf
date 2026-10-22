@@ -47,6 +47,8 @@ workflow PIPELINE_INITIALISATION {
     relabel_genes              // boolean
     segmentation_mask          // string: path to segmentation mask
     transcript_seg_methods     // list: valid coordinate-mode segmentation methods
+    run_ovrlpy                 // boolean
+    extensions_container       // string: image with InstanSeg and ovrlpy
 
     main:
 
@@ -126,6 +128,8 @@ workflow PIPELINE_INITIALISATION {
         probes_fasta,
         reference_annotations,
         gene_synonyms,
+        run_ovrlpy,
+        extensions_container,
     )
     log.info("✅ Pipeline parameters validated.")
 
@@ -222,7 +226,9 @@ def validateInputParameters(
     offtarget_probe_tracking,
     probes_fasta,
     reference_annotations,
-    gene_synonyms
+    gene_synonyms,
+    run_ovrlpy,
+    extensions_container
 ) {
 
     // check if conda profile is provided
@@ -279,6 +285,14 @@ def validateInputParameters(
         if (!segmentation_mask) {
             log.warn("⚠️  Missing segmentation mask with `--segmentation_mask` when pipeline is run in ${mode} and with the ${method}. Running in coordinate mode.")
         }
+    }
+
+    // check that InstanSeg and ovrlpy have their container
+    if ((method == 'instanseg' || run_ovrlpy) && !extensions_container) {
+        error("❌ Error: `--method instanseg` and `--run_ovrlpy` need `--extensions_container`: an image with instanseg-torch (and its model) and ovrlpy.")
+    }
+    if (method == 'instanseg' && mode != 'image') {
+        error("❌ Error: `--method instanseg` is an image-based method; use it with `--mode image`.")
     }
 
     // check if required arguments are provided for off-target probe tracking

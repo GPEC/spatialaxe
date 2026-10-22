@@ -72,6 +72,7 @@ workflow NFCORE_SPATIALAXE {
         params.qupath_polygons,
         params.reference_annotations,
         params.relabel_genes,
+        params.run_ovrlpy,
         params.run_qc,
         params.segger_model,
         params.segmentation_mask,
@@ -118,6 +119,8 @@ workflow {
         params.relabel_genes,
         params.segmentation_mask,
         params.transcript_seg_methods,
+        params.run_ovrlpy,
+        params.extensions_container,
     )
 
     //

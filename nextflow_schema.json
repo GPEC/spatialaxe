@@ -36,7 +36,7 @@
                 },
                 "method": {
                     "type": "string",
-                    "enum": ["cellpose", "xeniumranger", "baysor", "proseg", "segger", "ficture", "stardist"],
+                    "enum": ["cellpose", "xeniumranger", "baysor", "proseg", "segger", "ficture", "stardist", "instanseg"],
                     "description": "Segmentation method to run."
                 },
                 "gene_panel": {
@@ -226,7 +226,7 @@
                     "type": "array",
                     "items": {
                         "type": "string",
-                        "enum": ["cellpose", "xeniumranger", "baysor", "stardist"]
+                        "enum": ["cellpose", "xeniumranger", "baysor", "stardist", "instanseg"]
                     },
                     "description": "List of image-based segmentation methods."
                 },
@@ -422,6 +422,55 @@
                 }
             }
         },
+        "extension_options": {
+            "title": "Extension options",
+            "type": "object",
+            "fa_icon": "fas fa-puzzle-piece",
+            "description": "InstanSeg, ovrlpy and replacement containers (added by this fork).",
+            "properties": {
+                "xeniumranger_container": {
+                    "type": "string",
+                    "description": "Xenium Ranger image for every Xenium Ranger step: a local image path or a registry URI.",
+                    "help_text": "Xenium Ranger must be at least as new as the Xenium Onboard Analysis that wrote the bundle, or import-segmentation rejects it. Unset: quay.io/nf-core/xeniumranger:4.0.",
+                    "fa_icon": "fas fa-box"
+                },
+                "extensions_container": {
+                    "type": "string",
+                    "description": "Image with instanseg-torch (and its model weights) and ovrlpy, for `--method instanseg` and `--run_ovrlpy`.",
+                    "fa_icon": "fas fa-box"
+                },
+                "instanseg_model": {
+                    "type": "string",
+                    "default": "fluorescence_nuclei_and_cells",
+                    "description": "InstanSeg model (must be built into the extensions container).",
+                    "fa_icon": "fas fa-microscope"
+                },
+                "instanseg_level": {
+                    "type": "integer",
+                    "default": 1,
+                    "minimum": 0,
+                    "description": "Pyramid level of the morphology image to segment: 1 = half resolution, 0 = full (about 4x the memory and time). Masks are always written at full resolution.",
+                    "fa_icon": "fas fa-layer-group"
+                },
+                "instanseg_channels": {
+                    "type": "string",
+                    "pattern": "^\\d+( \\d+)*$",
+                    "description": "Space-separated morphology_focus channel indices to segment, e.g. '0 1' for DAPI and boundary stain. Unset: all channels.",
+                    "fa_icon": "fas fa-palette"
+                },
+                "run_ovrlpy": {
+                    "type": "boolean",
+                    "description": "Run ovrlpy signal integrity on the bundle the run ends with: the new bundle in image or coordinate mode, otherwise the input bundle.",
+                    "fa_icon": "fas fa-layer-group"
+                },
+                "ovrlpy_min_qv": {
+                    "type": "number",
+                    "default": 20,
+                    "description": "Minimum transcript Q-score for ovrlpy.",
+                    "fa_icon": "fas fa-filter"
+                }
+            }
+        },
         "institutional_config_options": {
             "title": "Institutional config options",
             "type": "object",
@@ -597,6 +646,9 @@
         },
         {
             "$ref": "#/$defs/segmentation_options"
+        },
+        {
+            "$ref": "#/$defs/extension_options"
         },
         {
             "$ref": "#/$defs/institutional_config_options"
