@@ -18,6 +18,20 @@
 
 [![Get help on Slack](http://img.shields.io/badge/slack-nf--core%20%23spatialaxe-4A154B?labelColor=000000&logo=slack)](https://nfcore.slack.com/channels/spatialaxe)[![Follow on Bluesky](https://img.shields.io/badge/bluesky-%40nf__core-1185fe?labelColor=000000&logo=bluesky)](https://bsky.app/profile/nf-co.re)[![Follow on Mastodon](https://img.shields.io/badge/mastodon-nf__core-6364ff?labelColor=FFFFFF&logo=mastodon)](https://mstdn.science/@nf_core)[![Watch on YouTube](http://img.shields.io/badge/youtube-nf--core-FF0000?labelColor=000000&logo=youtube)](https://www.youtube.com/c/nf-core)
 
+> [!IMPORTANT]
+> **This is a fork of nf-core/spatialaxe 1.0.1** (branch `ext`, tags `1.0.1-ext.N`). It adds:
+>
+> - **InstanSeg** as an image-based method: `--mode image --method instanseg`. Nuclei and
+>   cell masks from every `morphology_focus` channel, imported with Xenium Ranger like
+>   Cellpose masks, so the run ends with a new bundle, SpatialData and MultiQC reports.
+> - **ovrlpy** signal integrity: `--run_ovrlpy`, in any mode, on the bundle the run ends with.
+> - **`--xeniumranger_container`**: your own Xenium Ranger image for every Xenium Ranger
+>   step, for bundles written by a newer Xenium Onboard Analysis than
+>   `quay.io/nf-core/xeniumranger:4.0` accepts.
+>
+> InstanSeg and ovrlpy run in an image you provide with `--extensions_container`
+> (instanseg-torch with its model weights, and ovrlpy). Everything else is upstream 1.0.1.
+
 ## Introduction
 
 **nf-core/spatialaxe** is a bioinformatics best-practice processing and quality control pipeline for Xenium (and soon Atera) data. The current plan for the pipeline implementation is shown in the metromap below. **The pipeline is under active developement and changes might occure frequently**.
@@ -36,6 +50,7 @@ The pipeline supports the following tools:
   - [Cellpose](https://doi.org/10.1038/s41592-020-01018-x)
   - [Xenium ranger (XR)](https://www.10xgenomics.com/support/software/xenium-ranger/latest)
   - [StarDist](https://doi.org/10.48550/arXiv.2203.02284)
+  - [InstanSeg](https://doi.org/10.1101/2024.09.04.611150) (this fork)
 - Segmentation free methods:
   - [Ficture](https://doi.org/10.1038/s41592-024-02415-2)
   - [Baysor](https://doi.org/10.1038/s41587-021-01044-w)

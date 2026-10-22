@@ -10,6 +10,14 @@
 
 ## Pipeline tools
 
+- [InstanSeg](https://doi.org/10.1101/2024.09.04.611150) (this fork)
+
+> Goldsborough T, O'Callaghan A, Inglis F, et al. A novel channel invariant architecture for the segmentation of cells and nuclei in multiplexed images using InstanSeg. bioRxiv 2024. doi: 10.1101/2024.09.04.611150
+
+- [ovrlpy](https://doi.org/10.1038/s41587-026-03004-8) (this fork)
+
+> Tiesmeyer S, Müller-Bötticher N, Malt A, et al. Identifying 3D signal overlaps in spatial transcriptomics data with ovrlpy. Nat Biotechnol. 2026. doi: 10.1038/s41587-026-03004-8
+
 - [MultiQC](https://pubmed.ncbi.nlm.nih.gov/27312411/)
 
 > Ewels P, Magnusson M, Lundin S, Käller M. MultiQC: summarize analysis results for multiple tools and samples in a single report. Bioinformatics. 2016 Oct 1;32(19):3047-8. doi: 10.1093/bioinformatics/btw354. Epub 2016 Jun 16. PubMed PMID: 27312411; PubMed Central PMCID: PMC5039924.
